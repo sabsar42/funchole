@@ -42,6 +42,9 @@ services:
       # first, since every other user's Gateway lands on a randomly chosen
       # one of the admin's verified domains automatically.
       CLOUD_MODE_ENABLED: ${CLOUD_MODE_ENABLED:-false}
+      # Optional - posts to this Discord webhook every time CLOUD_MODE_ENABLED
+      # self-registration creates a new AppUser. See DiscordNotificationProperties.
+      DISCORD_SIGNUP_WEBHOOK_URL: ${DISCORD_SIGNUP_WEBHOOK_URL:-}
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:7080/actuator/health >/dev/null 2>&1"]
       interval: 5s
