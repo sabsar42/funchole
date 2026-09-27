@@ -6,6 +6,8 @@ FuncHole is an open-source, self-hosted serverless platform: create Functions, c
 
 > Wireframe only. The image above is a product-direction screenshot, not the current shipped interface.
 
+🎥 [Watch the explainer demo](./funchole-explainer-demo.mp4)
+
 ## Overview
 
 FuncHole is shaped around a simple request model:
