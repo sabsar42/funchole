@@ -8,7 +8,15 @@ import { inputClass, labelClass, fieldClass } from "@/components/Input";
 import { PageHeader } from "@/components/PageHeader";
 import { ResourceList, ResourceListState } from "@/components/ResourceList";
 import { StatusBadge } from "@/components/StatusBadge";
-import { PlusIcon, TrashIcon, AnthropicIcon, OpenAIIcon, OpencodeIcon } from "@/components/icons";
+import {
+  PlusIcon,
+  TrashIcon,
+  AnthropicIcon,
+  OpenAIIcon,
+  OpencodeIcon,
+  AntigravityIcon,
+  PukuIcon,
+} from "@/components/icons";
 import { api, ApiError, API_BASE_URL, APP_URL } from "@/lib/api";
 import type { ApiKeyResponse } from "@/lib/types";
 import { FormError } from "@/components/FormError";
@@ -23,6 +31,11 @@ interface AgentCommand {
   name: string;
   icon: (props: { className?: string }) => ReactNode;
   command: (rawKey: string) => string;
+  // Where the command/snippet goes, for agents configured via a file instead
+  // of a CLI invocation (e.g. Antigravity's mcp_config.json) - shown next to
+  // the agent name, kept out of the copyable value itself so what gets
+  // copied is exactly the file's contents.
+  note?: string;
 }
 
 const AGENT_COMMANDS: AgentCommand[] = [
@@ -43,6 +56,26 @@ const AGENT_COMMANDS: AgentCommand[] = [
     icon: OpencodeIcon,
     command: (rawKey) =>
       `opencode mcp add funchole --url ${MCP_URL} --header "Authorization=Bearer ${rawKey}"`,
+  },
+  {
+    name: "Antigravity",
+    icon: AntigravityIcon,
+    // Antigravity has no CLI "add" command - MCP servers are configured via
+    // its shared config file, read by the 2.0 IDE, the agy CLI, and the SDK
+    // alike.
+    note: "~/.gemini/config/mcp_config.json",
+    command: (rawKey) =>
+      JSON.stringify(
+        { mcpServers: { funchole: { serverUrl: MCP_URL, headers: { Authorization: `Bearer ${rawKey}` } } } },
+        null,
+        2
+      ),
+  },
+  {
+    name: "Puku",
+    icon: PukuIcon,
+    command: (rawKey) =>
+      `puku-cli mcp add funchole --transport http ${MCP_URL} -H "Authorization: Bearer ${rawKey}"`,
   },
 ];
 
@@ -146,6 +179,7 @@ export default function ApiKeysPage() {
                   <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
                     <agent.icon className="h-4 w-4" />
                     {agent.name}
+                    {agent.note && <span className="font-mono text-xs font-normal text-muted-foreground">{agent.note}</span>}
                   </div>
                   <CopyableCommand value={agent.command(revealedKey)} />
                 </div>

@@ -161,6 +161,12 @@ const AGENT_COMMANDS = {
     'export FUNCHOLE_MCP_TOKEN=fh_mcp_...\ncodex mcp add funchole --url https://app.funchole.dev/mcp --bearer-token-env-var FUNCHOLE_MCP_TOKEN',
   opencode:
     'opencode mcp add funchole --url https://app.funchole.dev/mcp --header "Authorization=Bearer fh_mcp_..."',
+  // Antigravity has no CLI "add" command - MCP servers are configured via
+  // its shared config file (~/.gemini/config/mcp_config.json, read by the
+  // 2.0 IDE, the agy CLI, and the SDK alike), not a terminal invocation.
+  antigravity:
+    '{\n  "mcpServers": {\n    "funchole": {\n      "serverUrl": "https://app.funchole.dev/mcp",\n      "headers": { "Authorization": "Bearer fh_mcp_..." }\n    }\n  }\n}',
+  puku: 'puku-cli mcp add funchole --transport http https://app.funchole.dev/mcp -H "Authorization: Bearer fh_mcp_..."',
 };
 
 function setupAgentTabs() {
